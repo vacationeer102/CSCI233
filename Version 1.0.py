@@ -47,16 +47,14 @@ class Main_Window(Frame):
                 r_e_list = [[None for y in range(4)] for x in range(r_e_size)]
                 i= 0
                 for r_e_row in r_e_tablecur:
-                    print i
-                    print "Recommender Name = ", r_e_row[1]
+                    recommender = "Recommender Name = ", r_e_row[1], "Rec or Eval? ", r_e_row[2], "Date of Submission", r_e_row[3], "Relationship to Student = ", r_e_row[4]
                     r_e_list[i][0] = r_e_row[1]
-                    print "Rec or Eval? ", r_e_row[2]
                     r_e_list[i][1] = r_e_row[2]
-                    print "Date of Submission", r_e_row[3]
                     r_e_list[i][2] = r_e_row[3]
-                    print "Relationship to Student = ", r_e_row[4]
                     r_e_list[i][3] = r_e_row[4]
                     i = i+1
+                    self.recommender_l = Label(self, text= recommender)
+                    self.recommender_l.pack(expand= 1, side= "bottom")
 
                 for j in range (0, len(r_e_list)):
                     print r_e_list[j]
