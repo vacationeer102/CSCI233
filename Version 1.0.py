@@ -2,6 +2,9 @@
 
 from Tkinter import *
 import sqlite3 as sql
+import sys
+import os
+
 
 class Main_Window(Frame):
     def createWidgets(self):
@@ -16,6 +19,9 @@ class Main_Window(Frame):
 
         self.QUIT = Button(self, text= "QUIT", command= self.quit)
         self.QUIT.pack(side= "left")
+
+        self.restart = Button(self, text= "RESTART", command= self.restart_program)
+        self.restart.pack(side= "left")
 
 
     def __init__(self, master=None):
@@ -59,6 +65,10 @@ class Main_Window(Frame):
                 for j in range (0, len(r_e_list)):
                     print r_e_list[j]
 
+    def restart_program(self):
+        python = sys.executable
+        os.execl(python, python, * sys.argv)
+    
 root = Tk()
 app = Main_Window(master=root)
 app.mainloop()
