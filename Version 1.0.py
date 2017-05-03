@@ -23,15 +23,13 @@ class Main_Window(Frame):
         self.QUIT = Button(self, text= "QUIT", command= self.quit)
         self.QUIT.grid(row= rowno, column= 3)
 
-        self.restart = Button(self, text= "RESTART", command= self.restart_program)
-        self.restart.grid(row= rowno, column= 4)
-
         rowno= 1
 
         global rowno
         
 
     def blankLabel(self):
+        ##Create a blank row
         global rowno
         self.blank = Label(self, text= " ")
         self.blank.grid(row= rowno)
@@ -40,33 +38,40 @@ class Main_Window(Frame):
         
 
     def search(self):
+
+        ##Destroy all previous entries
+        for label in self.grid_slaves():
+            if int(label.grid_info()["row"]) > 0:
+                label.grid_remove()
+
+        ##Link to database
         s_id = self.s_id_e.get()
         con = sql.connect('test.db')
 
+        ##Globalize rowno to maintain grid
         global rowno
-        print rowno
-        
+
         self.blankLabel()
 
         with con:
 
+            ##2 cursors - one for students, one for recommendations
             s_cur = con.cursor()
             r_e_cur = con.cursor()
 
+            ##Create the headings
             self.student_l = Label(self, text= "Student ID")
             self.student_l.grid(row=rowno, column=0)
-            
             self.student_l = Label(self, text= "Student Name")
             self.student_l.grid(row=rowno, column=1)
-
             self.student_l = Label(self, text= "Proposed Major")
             self.student_l.grid(row=rowno, column=2)
-
             self.student_l = Label(self, text= "Proposed Career")
             self.student_l.grid(row=rowno, column=3)
 
             rowno= rowno+1
-            
+
+            ##Print out student information
             s_tablecur = s_cur.execute("SELECT * FROM Student WHERE student_id =?", (s_id,))
             for s_row in s_tablecur:
                 for i in range(len(s_row)):
@@ -76,14 +81,24 @@ class Main_Window(Frame):
 
             self.blankLabel()
 
-            r_e_temp = r_e_cur.execute("SELECT COUNT(r_e_name) FROM Recs_Evals WHERE r_e_id=?", (s_id,))
-            for row in r_e_temp:
-                r_e_size= row[0]
-                self.recom_amount = Label(self, text= "Number of Recs and Evals")
+            ##Print out number of recommendations and evaluations
+            r_temp = r_e_cur.execute("SELECT COUNT(r_e_name) FROM Recs_Evals WHERE r_e_id=? AND r_or_e= 'r'", (s_id,))
+            e_temp = r_e_cur.execute("SELECT COUNT(r_e_name) FROM Recs_Evals WHERE r_e_id=? AND r_or_e= 'e'", (s_id,))
+            for row in r_temp:
+                r_size= row[0]
+                self.recom_amount = Label(self, text= "Number of Recs")
                 self.recom_amount.grid(row= rowno, sticky= 'n')
 
                 self.recom_amount = Label(self, text= row[0])
                 self.recom_amount.grid(row= rowno, column= 1, sticky= 'n')
+            for row in e_temp:
+                e_size= row[0]
+                self.eval_amount = Label(self, text= "Number of Evals")
+                self.eval_amount.grid(row= rowno, column= 2, sticky= 'n')
+
+                self.eval_amount = Label(self, text= row[0])
+                self.eval_amount.grid(row= rowno, column= 3, sticky= 'n')
+            r_e_size= int(r_size)+int(e_size)
             rowno= rowno+1
 
             self.blankLabel()
@@ -117,13 +132,7 @@ class Main_Window(Frame):
                 for k in range (4):
                     self.recommender_l = Label(self, text= r_e_list[j][k])
                     self.recommender_l.grid(row= j+rowno, column= k)
-
-
-    def restart_program(self):
-        self.student_l.grid_remove()
-        self.recom_amount.grid_remove()
-        self.recommender_l.grid_remove()
-        
+                    
         
     def __init__(self, master=None):
         Frame.__init__(self, master)
