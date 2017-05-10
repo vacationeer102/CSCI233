@@ -1,0 +1,8 @@
+Student ID 	 23177525 	 Student Name 	 Frank Yeh
+
+Number of Recommendations	 1	 Number of Evaulations	 1
+
+Professor's Name    Rec or Eval?    Time of Submission          Relationship
+------------------  --------------  --------------------------  --------------------
+Alexandratos        r               2017-03-08 06:53:52.060391  Professor Chemistry
+Preuss              e               2017-03-08 06:54:13.568650  Professor Psychology
