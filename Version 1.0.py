@@ -65,8 +65,6 @@ class Main_Window(Frame):
         self.QUIT.grid(row= rowno, column= 4)
 
         rowno= 1
-
-        global rowno
         
 
     def blankLabel(self):
@@ -75,8 +73,7 @@ class Main_Window(Frame):
         self.blank = Label(self, text= " ")
         self.blank.grid(row= rowno)
         rowno= rowno+1
-        global rowno
-        
+
 
     def search(self):
 
@@ -194,6 +191,8 @@ class Main_Window(Frame):
         global rowno
         rowno= 0
 
+        ##Create a new student
+
         self.s_id_l = Label(self, text= "Enter Student ID:")
         self.s_id_l.grid(row= rowno, column= 0)
 
@@ -221,7 +220,9 @@ class Main_Window(Frame):
         self.enter = Button(self, text= "Done?", command= self.db_student)
         self.enter.grid(row= rowno+1, column= 0)
 
+
     def db_student(self):
+        ##Parse information into student Database
         s_id = self.s_id_e.get()
         s_name = self.s_name_e.get()
         s_major = self.s_major_e.get()
@@ -259,6 +260,8 @@ class Main_Window(Frame):
         global rowno
         rowno= 0
 
+        ##Create a new Rec or Eval
+
         self.r_e_id_l = Label(self, text= "Enter Student ID:")
         self.r_e_id_l.grid(row= rowno, column= 0)
 
@@ -271,6 +274,8 @@ class Main_Window(Frame):
         self.r_e_name_e = Entry(self)
         self.r_e_name_e.grid(row= rowno, column= 3)
 
+        global r_e
+
         r_e= StringVar()
         options={"r","e"}
         r_e.set("r")
@@ -281,7 +286,7 @@ class Main_Window(Frame):
         self.r_or_e_e = OptionMenu(self, r_e, *options)
         self.r_or_e_e.grid(row= rowno, column= 5)
 
-        global r_e
+        
 
         self.r_e_relation_l = Label(self, text= "Enter Rec Relationship:")
         self.r_e_relation_l.grid(row= rowno, column= 6)
@@ -294,6 +299,7 @@ class Main_Window(Frame):
 
 
     def db_rec(self):
+        ##Pass information into new Rec or Eval
         r_e_id = self.r_e_id_e.get()
         r_e_name = self.r_e_name_e.get()
         r_or_e = r_e.get()
