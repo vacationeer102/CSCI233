@@ -5,6 +5,7 @@ import sqlite3 as sql
 import sys
 import os
 from tabulate import tabulate
+import datetime
 
 
 def create_file(student, rec_num, eval_num, letter_list):
@@ -18,6 +19,33 @@ def create_file(student, rec_num, eval_num, letter_list):
 class Main_Window(Frame):
     
     def createWidgets(self):
+        ##Destroy all previous entries
+        for label in self.grid_slaves():
+            if int(label.grid_info()["row"]) >= 0:
+                label.grid_remove()
+        
+        self.main_screen = Label(self, text= "Welcome to Student Advising Helper")
+        self.main_screen.grid(row= 0, column= 0)
+
+        self.retrieve_button = Button(self, text= "Retrieve Student?", command= self.retrieve)
+        self.retrieve_button.grid(row= 1, column= 0)
+
+        self.input_button = Button(self, text= "Input Student?", command= self.s_input)
+        self.input_button.grid(row= 2, column= 0)
+
+        self.amend_button = Button(self, text= "Add Recs or Evals?", command= self.amend)
+        self.amend_button.grid(row= 3, column= 0)
+
+        self.QUIT = Button(self, text= "QUIT", command= self.quit)
+        self.QUIT.grid(row= 4, column= 0)
+
+
+    def retrieve(self):
+        ##Destroy all previous entries
+        for label in self.grid_slaves():
+            if int(label.grid_info()["row"]) >= 0:
+                label.grid_remove()
+
         global rowno
         rowno= 0
         
@@ -30,8 +58,11 @@ class Main_Window(Frame):
         self.s_id_b = Button(self, text= "Search", command= self.search)
         self.s_id_b.grid(row= rowno, column= 2)
 
+        self.return_menu = Button(self, text= "Return", command= self.createWidgets)
+        self.return_menu.grid(row= rowno, column= 3)
+        
         self.QUIT = Button(self, text= "QUIT", command= self.quit)
-        self.QUIT.grid(row= rowno, column= 3)
+        self.QUIT.grid(row= rowno, column= 4)
 
         rowno= 1
 
@@ -153,6 +184,145 @@ class Main_Window(Frame):
             self.create_text = Button(self, text= "Create a Text File?", command= lambda: create_file(s_list, r_size, e_size, r_e_list))
             self.create_text.grid(row= rowno)
             
+
+    def s_input(self):
+        ##Destroy all previous entries
+        for label in self.grid_slaves():
+            if int(label.grid_info()["row"]) >= 0:
+                label.grid_remove()
+
+        global rowno
+        rowno= 0
+
+        self.s_id_l = Label(self, text= "Enter Student ID:")
+        self.s_id_l.grid(row= rowno, column= 0)
+
+        self.s_id_e = Entry(self)
+        self.s_id_e.grid(row= rowno, column= 1)
+
+        self.s_name_l = Label(self, text= "Enter Student Name:")
+        self.s_name_l.grid(row= rowno, column= 2)
+
+        self.s_name_e = Entry(self)
+        self.s_name_e.grid(row= rowno, column= 3)
+
+        self.s_major_l = Label(self, text= "Enter Student Major:")
+        self.s_major_l.grid(row= rowno, column= 4)
+
+        self.s_major_e = Entry(self)
+        self.s_major_e.grid(row= rowno, column= 5)
+
+        self.s_career_l = Label(self, text= "Enter Student Career:")
+        self.s_career_l.grid(row= rowno, column= 6)
+
+        self.s_career_e = Entry(self)
+        self.s_career_e.grid(row= rowno, column= 7)
+
+        self.enter = Button(self, text= "Done?", command= self.db_student)
+        self.enter.grid(row= rowno+1, column= 0)
+
+    def db_student(self):
+        s_id = self.s_id_e.get()
+        s_name = self.s_name_e.get()
+        s_major = self.s_major_e.get()
+        s_career = self.s_career_e.get()
+
+        con = sql.connect('test.db')
+
+        with con:
+            s_cur= con.cursor()
+            s_params = (s_id, s_name, s_major, s_career)
+            s_cur.execute("INSERT INTO Student VALUES(?,?,?,?)", s_params)
+            con.commit()
+        
+        ##Destroy all previous entries
+        for label in self.grid_slaves():
+            if int(label.grid_info()["row"]) >= 0:
+                label.grid_remove()
+
+        self.enter = Button(self, text= "Enter Recs?", command= self.amend)
+        self.enter.grid(row= 0, column= 0)
+
+        self.return_menu = Button(self, text= "Return", command= self.createWidgets)
+        self.return_menu.grid(row= rowno, column= 1)
+        
+        self.QUIT = Button(self, text= "QUIT", command= self.quit)
+        self.QUIT.grid(row= rowno, column= 2)
+
+
+    def amend(self):
+        ##Destroy all previous entries
+        for label in self.grid_slaves():
+            if int(label.grid_info()["row"]) >= 0:
+                label.grid_remove()
+
+        global rowno
+        rowno= 0
+
+        self.r_e_id_l = Label(self, text= "Enter Student ID:")
+        self.r_e_id_l.grid(row= rowno, column= 0)
+
+        self.r_e_id_e = Entry(self)
+        self.r_e_id_e.grid(row= rowno, column= 1)
+
+        self.r_e_name_l = Label(self, text= "Enter Rec Name:")
+        self.r_e_name_l.grid(row= rowno, column= 2)
+
+        self.r_e_name_e = Entry(self)
+        self.r_e_name_e.grid(row= rowno, column= 3)
+
+        r_e= StringVar()
+        options={"r","e"}
+        r_e.set("r")
+
+        self.r_or_e_l = Label(self, text= "Rec or eval? (r/e)")
+        self.r_or_e_l.grid(row= rowno, column= 4)
+
+        self.r_or_e_e = OptionMenu(self, r_e, *options)
+        self.r_or_e_e.grid(row= rowno, column= 5)
+
+        global r_e
+
+        self.r_e_relation_l = Label(self, text= "Enter Rec Relationship:")
+        self.r_e_relation_l.grid(row= rowno, column= 6)
+
+        self.r_e_relation_e = Entry(self)
+        self.r_e_relation_e.grid(row= rowno, column= 7)
+
+        self.enter = Button(self, text= "Done?", command= self.db_rec)
+        self.enter.grid(row= rowno+1, column= 0)
+
+
+    def db_rec(self):
+        r_e_id = self.r_e_id_e.get()
+        r_e_name = self.r_e_name_e.get()
+        r_or_e = r_e.get()
+        r_e_relation = self.r_e_relation_e.get()
+        date_of_submission = datetime.datetime.now()
+
+        con = sql.connect('test.db')
+
+        with con:
+            r_e_cur= con.cursor()
+            r_e_params = (r_e_id, r_e_name, r_or_e, date_of_submission, r_e_relation)
+            r_e_cur.execute("INSERT INTO Recs_Evals VALUES(?,?,?,?,?)", r_e_params)
+            con.commit()
+
+        
+        ##Destroy all previous entries
+        for label in self.grid_slaves():
+            if int(label.grid_info()["row"]) >= 0:
+                label.grid_remove()
+
+        self.enter = Button(self, text= "Enter Recs?", command= self.amend)
+        self.enter.grid(row= 0, column= 0)
+
+        self.return_menu = Button(self, text= "Return", command= self.createWidgets)
+        self.return_menu.grid(row= rowno, column= 1)
+        
+        self.QUIT = Button(self, text= "QUIT", command= self.quit)
+        self.QUIT.grid(row= rowno, column= 2)
+
         
     def __init__(self, master=None):
         Frame.__init__(self, master)
