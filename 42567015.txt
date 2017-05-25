@@ -1,0 +1,8 @@
+Student ID 	 42567015 	 Student Name 	 Keith Merlin Anne Ilagan
+
+Number of Recommendations	 1	 Number of Evaulations	 1
+
+Professor's Name    Rec or Eval?    Time of Submission          Relationship
+------------------  --------------  --------------------------  -------------------
+Drain               r               2017-05-24 12:52:12.388107  Professor Chemistry
+Loayza              e               2017-05-24 12:52:42.867942  Professor Genetics
